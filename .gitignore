@@ -1,0 +1,3 @@
+*.bak
+*.py.save
+__pycache__/

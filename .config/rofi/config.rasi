@@ -1,0 +1,71 @@
+configuration {
+    font:           "Fira Code Nerd Font 11";
+    show-icons:     true;
+    icon-theme:     "Reversal-dark";
+    hide-scrollbar: true;
+    sidebar-mode:   false;
+    fullscreen:     false;
+}
+
+@import "colors.rasi"
+
+window {
+    transparency:       "real";
+    border:             0px;
+    background-color:   @bg;
+    location:           center;
+}
+
+mainbox {
+    background-color:   transparent;
+    children:           ["inputbar", "listview"];
+}
+
+prompt {
+    enabled:    false;
+}
+
+textbox-prompt-colon {
+    str:    "";
+}
+
+entry {
+    padding:            1% 0.5%;
+    blink:              true;
+    placeholder:        "Search...";
+    background-color:   @fgb;
+    text-color:         @fg;
+    border:             0% 0% 0% 0%;
+    border-color:       @fgb;
+}
+
+inputbar {
+    background-color:   transparent;
+    border:             0px;
+    margin:             0%;
+    padding:            1.5% 0.75%;
+}
+
+listview {
+    columns:            1;
+    lines:              7;
+    dynamic:            true;
+    background-color:   transparent;
+}
+
+element {
+    padding:            1% 2%;
+    background-color:   transparent;
+    text-color:         @fg;
+}
+
+element-icon {
+    size:   32px;
+}
+
+element selected {
+    background-color: @sel;
+    border: 0% 1.5ch 0% 0%;
+    border-color: @acc;
+    width: 120%;
+}

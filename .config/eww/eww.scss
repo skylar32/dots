@@ -1,0 +1,251 @@
+* {
+    all: unset; //Unsets everything so you can style everything from scratch
+}
+
+// Color variables
+$bg-color: rgb(39, 49, 28);
+$fg-color: rgb(169, 184, 169);
+$fg-color-dim: rgb(128, 138, 128);
+$accent-light: rgb(98, 112, 98);
+$accent-bold: rgb(91, 124, 91);
+
+//Global Styles
+.bar {
+    color: $fg-color;
+    margin: 0 20px;
+    // background: $bg-color;
+    // padding: 0 10px;
+}
+
+.dock-box {
+    color: $fg-color;
+    background-color: $bg-color;
+    border-radius: 8px;
+    padding: 7px 10px;
+    border: 1px $accent-light solid;
+}
+
+.dock-box:not(:first-child) {
+    margin-left: 15px;
+}
+
+// Spotify widget
+.spotify {
+    min-width: 200px;
+}
+
+.album-art {
+    background-size: cover;
+    background-position: center;
+    min-width: 45px;
+    min-height: 45px;
+    border-radius: 100%;
+    margin-right: 10px;
+}
+
+.song-details {
+    margin-right: 1em;
+}
+
+.song {
+    margin-top: 7px;
+    font-weight: bold;
+}
+
+.artist {
+    font-size: 11px;
+}
+
+.media-controls {
+    min-width: 5em;
+}
+
+// Datetime widget
+.time {
+    font-size: 1.25em;
+    font-weight: bold;
+    margin-top: 3px;
+    margin-bottom: 1px;
+}
+
+.date {
+    font-size: 0.9em;
+}
+
+// Weather widget
+.weather-icon {
+    font-size: 4.5em;
+    margin: -20px 10px -22px 40px;
+}
+
+.temperature {
+    font-size: 1.2em;
+}
+
+// Workspace widget
+.qtile {
+    padding-top: 14px;
+}
+
+.workspace {
+    color: $fg-color-dim;
+    margin: 0 5px;
+    padding: 2px;
+    font-family: 'Fira Code Nerd Font Mono';
+    border-radius: 100%;
+    border: 1px $bg-color solid;
+    transition: background 0.25s ease-in-out, border 0.25s ease-in-out;
+}
+
+.workspace.occupied {
+    color: $fg-color;
+    border-color: $accent-light;
+}
+
+.workspace.active {
+    color: $bg-color;
+    border-color: $accent-light;
+    background: $accent-light;
+}
+
+.workspace.current {
+    color: $bg-color;
+    background: $fg-color;
+    border-color: $fg-color;
+}
+
+.workspace:hover {
+    background: $fg-color;
+    border-color: $accent-light;
+    background: $accent-light;
+}
+
+.workspace:hover {
+    color: $bg-color;
+}
+
+.workspace.active:hover {
+    color: $bg-color;
+    background: $fg-color;
+    border-color: $fg-color;
+}
+
+
+.workspace.current:hover {
+    color: $fg-color;
+    background: $bg-color;
+    border-color: $fg-color;
+}
+
+.workspace.icon {
+    font-size: 2em;
+    min-width: 1.3em;
+    margin-top: -5px;
+}
+
+.workspace:not(.icon) {
+    font-size: 1.5em;
+    padding: 7px;
+    min-width: 1.3em;
+    margin-top: -6px;
+}
+
+// Metrics widget
+label.num-updates {
+    margin-right: 1em;
+    background: $fg-color-dim;
+    color: $bg-color;
+    padding: 0 10px;
+    border-radius: 10px;
+}
+
+.metrics label.icon {
+    font-size: 2.75em;
+    margin-bottom: 0;
+    margin-right: 5px;
+}
+
+circular-progress {
+    background: $fg-color;
+    color: $accent-bold;
+}
+
+label.core {
+    color: $bg-color;
+    font-size: 2em;
+    margin-top: 1px;
+    margin-left: -26px;
+}
+
+.metrics label.pac {
+    margin-right: 20px;
+}
+
+// Controls widget
+.controls label.icon {
+    font-family: "Fira Code Nerd Font";
+    font-size: 2em;
+    margin-left: -5px;
+    min-width: 1.5em;
+}
+
+.controls label.icon.vol {
+    font-size: 2.5em;
+}
+
+.controls scale trough highlight {
+    all: unset;
+    background-color: $fg-color;
+    color: black;
+}
+  
+.controls scale trough {
+    all: unset;
+    background: $accent-light;
+    min-height: 5px;
+    min-width: 100px;
+    margin-right: 10px;
+}
+
+.controls label.wifi {
+    margin-right: 5px;
+}
+
+.wifi-info {
+    margin-right: 1em;
+    background: $fg-color-dim;
+    color: $bg-color;
+    padding: 0 10px;
+    border-radius: 10px;
+}
+
+.controls label.ssid {
+    font-weight: bolder;
+}
+
+.controls label.icon-sm {
+    font-weight: bold;
+    margin-left: 1em;
+}
+
+.controls label.wifi-stat {
+    min-width: 6em;
+}
+
+.controls .user {
+    font-size: 1.1em;
+    margin: 0 10px;
+}
+
+.power:hover {
+    color: rgb(161, 105, 105);
+    transition: color 100ms ease-in-out;
+}
+
+.controls .power-dock {
+    margin-left: 0.75em;
+    background: $fg-color-dim;
+    color: $bg-color;
+    padding: 0 10px;
+    border-radius: 10px;
+}
