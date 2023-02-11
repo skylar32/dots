@@ -1,0 +1,46 @@
+@define-color bg #504945;
+@define-color fg #d4be98;
+@define-color bg-search #dac9a5;
+@define-color fg-search #4f3829;
+@define-color accent #89b482;
+
+window {
+    border-radius: 40px;
+    background: @bg;
+}
+
+#outer-box {
+    border-radius: 40px;
+    background-image: url("file:///home/kyeugh/.config/wofi/forest-4-banner.jpg");
+    background-size: 100% auto;
+    background-repeat: no-repeat;
+}
+
+#input {
+    border-radius: 100px;
+    margin: 150px 50px;
+    padding: 25px 40px;
+    font-size: 24px;
+    color: @fg-search;
+    background: @bg-search;
+}
+
+#input image {
+    color: @fg-search;
+}
+
+#entry {
+    margin: 20px;
+    padding: 10px;
+    border-radius: 200px;
+    min-width: 400px;
+}
+
+#entry:selected {
+    background: @accent;
+    font-weight: 600;
+}
+
+image {
+    margin-right: 10px;
+}

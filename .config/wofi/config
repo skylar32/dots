@@ -1,0 +1,9 @@
+prompt=Search...
+monitor=DP-3
+allow_images=true
+allow_markup=true
+columns=2
+show=drun
+height=60%
+width=30%
+color=.config/wofi/colors
