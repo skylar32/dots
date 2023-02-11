@@ -1,0 +1,178 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;    Helpers    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defwidget spacer [size]
+    (label :text " " :style "min-width: ${size}em"))
+
+(defwidget metric [icon value ?onclick ?tooltip]
+    (eventbox :onclick onclick :tooltip tooltip :cursor {onclick != '' ? "pointer" : "default"}
+        (box :orientation "h" :space-evenly false :hexpand false :vexpand false
+            (label :class "icon" :text icon)
+            (circular-progress :value value :start-at 75 :thickness 13)
+            (label :class "core" :text "⬤")
+            (spacer :size 0.8))))
+
+(defwidget hover_slider_right [reveal_var reveal_var_name ?tooltip]
+    (eventbox :onhover "eww update ${reveal_var_name}=true" :onhoverlost "eww update ${reveal_var_name}=false" :tooltip tooltip
+    (box :orientation "h" :space-evenly false :hexpand true :vexpand false
+        (children :nth 0)
+        (revealer :reveal "${reveal_var}" :transition "slideright" :duration "250ms"
+            (children :nth 1)))))
+
+(defwidget hover_slider_left [reveal_var reveal_var_name ?tooltip]
+    (eventbox :onhover "eww update ${reveal_var_name}=true" :onhoverlost "eww update ${reveal_var_name}=false" :tooltip tooltip
+    (box :orientation "h" :space-evenly false :hexpand true :vexpand false
+        (revealer :reveal "${reveal_var}" :transition "slideright" :duration "250ms"
+            (children :nth 1))
+        (children :nth 0))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;    Widgets    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Spotify ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defwidget spotify [] 
+    (box :class "dock-box" :orientation "h" :space-evenly false :hexpand false :vexpand false :visible {spotify_status != "Stopped"}
+        (hover_slider_right :reveal_var show_media_controls :reveal_var_name "show_media_controls" :direction "right"
+            (eventbox :onclick "qtile cmd-obj -o group spotify -f toscreen" :cursor "pointer"
+                (box :class "spotify" :orientation "h" :space-evenly false :hexpand false :vexpand false
+                    (box :class "album-art" :hexpand false :vexpand false :style "background-image:url('${cover_art}');")
+                    (box :orientation "v" :class "song-details" :space-evenly false :hexpand false :vexpand false
+                        (label :halign "start" :class "song" :limit-width 26 :text song)
+                        (label :halign "start" :class "artist" :text artist))))
+            (centerbox :orientation "h" :class "media-controls" :valign "center" :halign "start" :hexpand true
+                (button :class "media-button" :onclick "playerctl previous" "玲")
+                (button :class "media-button" :onclick "playerctl play-pause" play_symbol)
+                (button :class "media-button" :onclick "playerctl next" "怜")))))
+
+;;; Variables ;;;
+(defpoll spotify_status :interval "10s" :initial "Stopped" "playerctl --player=spotify,%any status spotify")
+(defpoll song :interval "2s" "playerctl --player=spotify,%any metadata title")
+(defpoll artist :interval "2s" "playerctl --player=spotify,%any metadata artist")
+(defpoll album :interval "2s" "playerctl --player=spotify,%any metadata album")
+(defpoll cover_art :interval "2s" "playerctl --player=spotify,%any metadata mpris:artUrl")
+(defpoll play_symbol :interval "1s" "song_status=`playerctl --player=spotify,%any status`; case $song_status in 'Paused') echo '契';; *) echo '';; esac")
+(defvar show_media_controls false)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Date & Time ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defwidget datetime []
+    (box :class "datetime" :orientation "v" :space-evenly false :hexpand false :vexpand false
+        (label :halign "start" :class "time" :text current_time)
+        (label :halign "start" :class "date" :text current_date)))
+
+;;; Variables ;;;
+(defpoll current_time :interval "5s" "date +\"%I:%M %P\"")
+(defpoll current_date :interval "15s" "date +\"%A, %B %-d\"")
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Weather ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defwidget weather []
+        (box :class "weather" :orientation "h" :halign "end" :space-evenly false :hexpand false :vexpand false :tooltip "${conditions}. ${weather_alerts}
+Feels like ${round(weather_json.current.feels_like, 0)}°."
+            (label :halign "start" :class "weather-icon" :text weather_icon)
+            (label :halign "start" :class "temperature" :text "${temperature}°")))
+            
+;;; Variables ;;;
+(defpoll temperature :interval "60s" "python scripts/check_weather.py temperature")
+(defpoll weather_icon :interval "60s" "python scripts/check_weather.py conditions icon")
+(defpoll conditions :interval "60s" "python scripts/check_weather.py conditions description")
+(defpoll weather_json :interval "60s" "cat ~/.cache/eww/weather.json")
+(defpoll weather_alerts :interval "60s" "python scripts/check_weather.py alerts")
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Daily ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defwidget daily [] ; Date & time + Weather
+    (box :class "dock-box daily" :orientation "h" :space-evenly false :hexpand false :vexpand false
+        (datetime)
+        (weather)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Qtile ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defwidget qtile [screen]
+    (box :class "dock-box qtile" :orientation "h" :space-evenly false :hexpand false :vepxand false
+        (for workspace in workspaces
+            (button :class {workspace.classes} :valign "start" :onclick {workspace.onclick} {workspace.icon}))))
+
+;;; Variables ;;;
+(deflisten workspaces "~/.config/eww/scripts/read_workspaces.sh 0")
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Metrics ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defwidget metrics []
+    (box :class "dock-box metrics" :orientation "h" :space-evenly false :hexpand true :vexpand false
+        (eventbox :onclick "qtile run-cmd kitty yay -Syyu" :cursor "pointer" :visible "${pac_updates > 0}"
+            (hover_slider_left :reveal_var show_pac :reveal_var_name "show_pac"
+                (label :class "icon pac" :text "")
+                (label :class "num-updates" :text "${pac_updates} updates ready ")))
+        (metric :icon "󰍛" :value {EWW_CPU.cores[0].usage} :onclick "qtile run-cmd kitty htop -s PERCENT_CPU" :tooltip "Using ${round(EWW_CPU.avg, 0)}% CPU, ${EWW_TEMPS.CPU}°C")
+        (metric :icon "" :value {EWW_RAM.used_mem_perc} :onclick "qtile run-cmd kitty htop -s PERCENT_MEM" :tooltip "Using ${round(EWW_RAM.used_mem_perc, 0)}% RAM")
+        (metric :icon "" :value gpu_usage  :tooltip "${EWW_TEMPS.JUNCTION}°C")))
+
+;;; Variables ;;;
+(defpoll gpu_usage :interval "2s" "cat /sys/class/drm/card0/device/gpu_busy_percent")
+(defvar show_pac false)
+(defpoll pac_updates :interval "60s" "yay -Qu | wc -l")
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Controls ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defwidget controls []
+    (box :class "dock-box controls" :orientation "h" :space-evenly false :hexpand true :vexpand false
+        (hover_slider_left :reveal_var show_volume :reveal_var_name "show_volume" :tooltip "${volume}%"
+            (eventbox :onclick "~/.local/bin/switch-audio-output.sh" :onrightclick "amixer -D pulse set Master toggle" :cursor "pointer"
+                (label :class "icon vol" :text volume_icon))
+            (scale :min 0 :max 100 :value volume :onchange "amixer -D pulse sset Master {}%" ))
+        (hover_slider_left :reveal_var show_wifi :reveal_var_name "show_wifi"
+            (label :class "icon wifi" :text {ssid != '' ? "直" : '睊'})
+            (box :class "wifi-info" :orientation "h" :space-evenly false :hexpand true :vexpand false
+                        (label :class "ssid" :text {ssid ?: "Disconnected"})
+                        (label :class "icon-sm" :text "" :visible {ssid != ''})
+                            (label :class "wifi-stat" :text "${round(EWW_NET.wlan0.NET_DOWN / 1000, 1)} Kb/s" :visible {ssid != ''})
+                        (label :class "icon-sm" :text "祝" :visible {ssid != ''})
+                            (label :class "wifi-stat" :text "${round(EWW_NET.wlan0.NET_UP / 1000, 1)} Kb/s" :visible {ssid != ''})))
+        (hover_slider_left :reveal_var show_power :reveal_var_name "show_power"
+            (eventbox :class "power" :onclick "shutdown -n now" :tooltip "Shutdown" :cursor "pointer"
+                (label :class "icon power" :text "⏻"))
+            (box :class "power-dock" :orientation "h" :space-evenly true :hexpand true :vexpand false
+                (eventbox :class "power-button" :onclick "xset dpms force standby" :tooltip "Standby" :cursor "pointer"
+                    (label :class "icon" :text "﯏"))
+                (eventbox :class "power-button" :onclick "systemctl suspend" :tooltip "Suspend" :cursor "pointer"
+                    (label :class "icon" :text "鈴"))
+                (eventbox :class "power-button" :onclick "qtile cmd-obj -o cmd -f shutdown" :tooltip "Log out" :cursor "pointer"
+                    (label :class "icon" :text ""))
+                (eventbox :class "power-button" :onclick "reboot" :tooltip "Reboot" :cursor "pointer"
+                    (label :class "icon" :text "ﰇ"))))))
+
+;;; Variables ;;;
+(defpoll volume :interval "3s" "scripts/get-vol.sh")
+(defpoll volume_icon :interval "1s" "scripts/get-vol-icon.sh")
+(defvar show_volume false)
+(defpoll ssid :interval "15s" "nmcli -t -f active,ssid dev wifi | grep '^yes' | cut -d: -f2")
+(defvar show_wifi false)
+(defvar show_power false)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;    Windows    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defwidget left_bar []
+    (box :class "lbar" :orientation "h" :space-evenly false :hexpand true :vexpand false
+        (daily)
+        (spotify)))
+
+(defwidget center_bar []
+    (box :class "cbar" :orientation "h" :space-evenly false :hexpand true :vexpand false
+        (qtile :screen 0)))
+
+(defwidget right_bar []
+    (box :class "rbar" :orientation "h" :space-evenly false :hexpand true :vexpand false :halign "end"
+        (metrics)
+        (controls)))
+
+(defwidget bar []
+    (centerbox :class "bar" :orientation "h" :hexpand true :vexpand false
+        (left_bar)
+        (center_bar)
+        (right_bar)))
+
+(defwindow bar
+    :monitor 0
+    :geometry (geometry :x "0px"
+                        :y "10px"
+                        :width "3440px"
+                        :anchor "top left")
+    (bar))
