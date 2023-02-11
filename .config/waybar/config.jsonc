@@ -1,0 +1,106 @@
+[{
+    "layer": "top",
+    "output": ["DP-3"],
+    "position": "top",
+    "height": 55,
+    "spacing": 5,
+    "modules-left": ["wlr/workspaces"],
+    "modules-center": ["custom/hyprpill"],
+    "modules-right": ["memory", "temperature", "cpu", "network", "pulseaudio", "clock"],
+
+    /*
+     * MODULES
+     */
+    "wlr/workspaces": {
+        "format": "{icon}",
+        "format-active": " {icon} ",
+        "on-click": "activate"
+    },
+
+    "custom/hyprpill": {
+        "exec": "~/.config/waybar/custom_modules/hyprpill/hyprpill.py",
+        "exec-if": "exit 0",
+        "interval": 3600,
+        "signal": 8
+
+    },
+
+    "hyprland/window": {
+        "separate-outputs": true
+    },
+    
+    "memory": {
+        "format": "{}% <span font='15'></span>"
+    },
+
+    "temperature": {
+        "critical-threshold": 80,
+        "format": "",
+        "format-critical": "🔥"
+    },
+
+    "cpu": {
+        "format": "{icon0} {icon1} {icon2} {icon3} {icon4} {icon5} {icon6} {icon7}",
+        "format-icons": ["▁", "▂", "▃", "▄", "▅", "▆", "▇", "█"],
+        "interval": 1
+   },
+
+   "network": {
+       "interface": "wlan0",
+       "format": "{essid} <span font='15'>{icon}</span> ",
+       "format-icons": ["󰤟", "󰤢", "󰤥", "󰤨"],
+       "format-disconnected": "Disconnected <span font='15'>󰤫</span>",
+       "tooltip-format-wifi": "Connected to {essid}\rSignal strength: {signalStrength}%\rIP: {ipaddr}\rDown: {bandwidthDownBytes}B/s\rUp: {bandwidthUpBytes}B/S"
+   },
+
+   "pulseaudio": {
+        "format": "{volume}% <span font='15'>{icon}</span> ",
+        "format-muted": "<span font='15'></span>",
+        "format-icons": {
+            "default": ["", ""],
+            "headphone": ""
+        },
+        "on-click": "pavucontrol",
+        "on-click-middle": "~/.local/bin/switch-audio-output.sh",
+        "on-click-right": "amixer set Master toggle"
+   }
+},
+
+{
+    "layer": "top",
+    "output": ["HDMI-A-1"],
+    "position": "top",
+    "height": 55,
+    "spacing": 5,
+    "modules-left": ["wlr/workspaces"],
+    "modules-right": ["network", "pulseaudio", "clock"],
+
+    /*
+     * MODULES
+     */
+    "wlr/workspaces": {
+        "format": "{icon}",
+        "format-active": " {icon} ",
+        "on-click": "activate"
+    },
+
+   "network": {
+       "interface": "wlan0",
+       "format": "{essid} <span font='15'>{icon}</span> ",
+       "format-icons": ["󰤟", "󰤢", "󰤥", "󰤨"],
+       "format-disconnected": "Disconnected <span font='15'>󰤫</span>",
+       "tooltip-format-wifi": "Connected to {essid}\rSignal strength: {signalStrength}%\rIP: {ipaddr}\rDown: {bandwidthDownBytes}B/s\rUp: {bandwidthUpBytes}B/S"
+   },
+
+   "pulseaudio": {
+        "format": "{volume}% <span font='15'>{icon}</span> ",
+        "format-muted": "<span font='15'></span>",
+        "format-icons": {
+            "default": ["", ""],
+            "headphone": ""
+        },
+        "on-click": "pavucontrol",
+        "on-click-middle": "~/.local/bin/switch-audio-output.sh",
+        "on-click-right": "amixer set Master toggle"
+   }
+}]
