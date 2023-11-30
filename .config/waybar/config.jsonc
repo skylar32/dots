@@ -4,16 +4,16 @@
     "position": "top",
     "height": 55,
     "spacing": 5,
-    "modules-left": ["wlr/workspaces"],
+    "modules-left": ["hyprland/workspaces"],
     "modules-center": ["custom/hyprpill"],
     "modules-right": ["memory", "temperature", "cpu", "network", "pulseaudio", "clock"],
 
     /*
      * MODULES
      */
-    "wlr/workspaces": {
-        "format": "{icon}",
-        "format-active": " {icon} ",
+    "hyprland/workspaces": {
+        "format": "{name}",
+        "format-active": " {name} ",
         "on-click": "activate"
     },
 
@@ -72,15 +72,15 @@
     "position": "top",
     "height": 55,
     "spacing": 5,
-    "modules-left": ["wlr/workspaces"],
+    "modules-left": ["hyprland/workspaces"],
     "modules-right": ["network", "pulseaudio", "clock"],
 
     /*
      * MODULES
      */
-    "wlr/workspaces": {
-        "format": "{icon}",
-        "format-active": " {icon} ",
+    "hyprland/workspaces": {
+        "format": "{name}",
+        "format-active": " {name} ",
         "on-click": "activate"
     },
 
